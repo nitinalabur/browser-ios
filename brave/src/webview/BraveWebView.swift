@@ -174,8 +174,6 @@ class BraveWebView: UIWebView {
         return setUrl(location)
     }
 
-    fileprivate static var webviewBuiltinUserAgent = UserAgent.defaultUserAgent()
-
     // Needed to identify webview in url protocol
     func generateUniqueUserAgent() {
         struct StaticCounter {
@@ -183,10 +181,10 @@ class BraveWebView: UIWebView {
         }
 
         StaticCounter.counter += 1
-        let userAgentBase = usingDesktopUserAgent ? kDesktopUserAgent : BraveWebView.webviewBuiltinUserAgent
+        let userAgentBase = usingDesktopUserAgent ? kDesktopUserAgent : UserAgent.defaultUserAgent()
         let userAgent = userAgentBase + String(format:" _id/%06d", StaticCounter.counter)
         let defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
-        defaults.register(defaults: ["UserAgent": userAgent ])
+        defaults.register(defaults: ["UserAgent": userAgent, "UserAgent_default": userAgent])
         self.uniqueId = StaticCounter.counter
     }
 
@@ -374,7 +372,12 @@ class BraveWebView: UIWebView {
         if let url = request.url {
             internalSetBraveShieldStateForDomain(url.normalizedHost!)
         }
-        super.loadRequest(request)
+        
+        
+        var newRequest = request
+        newRequest.setValue("Testing111", forHTTPHeaderField: "User-Agent")
+        
+        super.loadRequest(newRequest)
     }
 
     enum LoadCompleteHtmlPropertyOption {
@@ -653,8 +656,12 @@ extension BraveWebView: UIWebViewDelegate {
         }
     }
 
-    func webView(_ webView: UIWebView,shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType ) -> Bool {
+    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType ) -> Bool {
         guard let url = request.url else { return false }
+        
+        
+//        request.setValue("Test User-Agent 123", forHTTPHeaderField: "User-Agent")
+        
 
         webView.backgroundColor = UIColor.white
 
@@ -746,7 +753,59 @@ extension BraveWebView: UIWebViewDelegate {
         }
 
         broadcastToPageStateDelegates()
+        
+        let defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+        let hidden = defaults.string(forKey: "UserAgent_default")
+        let curUserAgent = request.value(forHTTPHeaderField: "User-Agent")
+        
+        var shouldBe = hidden
+        let approvedHosts = ["duckduckgo.com"]
+        if let host = request.url?.normalizedHost, approvedHosts.contains(host) {
+            
+            shouldBe = "Test User Agent 143"
+            
+            // Bleed Brave user-agent
+//            let curUserAgent = request.value(forHTTPHeaderField: "User-Agent")
+        
+            
+//            let defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+//            defaults.register(defaults: ["UserAgent": "Test User Agent 143"])
+//            self.loadRequest(request)
+        
+//            return false
+        } else {
+//            let defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+//            let hidden = defaults.value(forKey: "UserAgent_default")
+//            defaults.register(defaults: ["UserAgent": hidden])
+        }
+        
+        if let shouldBe = shouldBe, curUserAgent != shouldBe {
+//            // Bad user agent, re-fire request
+            
+            
+            let defaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+            defaults.register(defaults: ["UserAgent": shouldBe])
+            defaults.synchronize()
+            
+            
+            
+//            
+            var unmaskedRequest = request
+            unmaskedRequest.setValue(shouldBe, forHTTPHeaderField: "User-Agent")
+            
+            
+            
+            
+//            self.loadRequest(unmaskedRequest)
 
+//            URLRequest(
+            
+//            request.setValue("", forHTTPHeaderField: "")
+//            self.loadRequest(request)
+//            
+//            return false
+        }
+        
         return true
     }
 

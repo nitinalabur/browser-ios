@@ -55,7 +55,7 @@ open class UserAgent {
      * This will typically return quickly, but can require creation of a UIWebView.
      * As a result, it must be called on the UI thread.
      */
-    open static func defaultUserAgent() -> String {
+    open static func defaultUserAgent(host: String? = nil) -> String {
         assert(Thread.current.isMainThread, "This method must be called on the main thread.")
 
         if let firefoxUA = UserAgent.cachedUserAgent(checkiOSVersion: true) {
