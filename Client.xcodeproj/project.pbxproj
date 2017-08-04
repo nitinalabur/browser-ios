@@ -242,7 +242,6 @@
 		5D2785BE1E71D7050066EC15 /* NicewareTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D27858C1E70CC660066EC15 /* NicewareTest.swift */; };
 		5D2AE6F81E83F3EC00BC274C /* SyncBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2AE6F51E83F3EC00BC274C /* SyncBookmark.swift */; };
 		5D2AE6FA1E83F3EC00BC274C /* SyncSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2AE6F71E83F3EC00BC274C /* SyncSite.swift */; };
-		5D2B07EB1E6733B900244C39 /* niceware.js in Resources */ = {isa = PBXBuildFile; fileRef = 5D2B07EA1E6733B900244C39 /* niceware.js */; };
 		5D2F106E1ECA0E3100CF0E0D /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F106D1ECA0E3100CF0E0D /* Device.swift */; };
 		5D2F109E1ECA40DC00CF0E0D /* SyncRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F109D1ECA40DC00CF0E0D /* SyncRecord.swift */; };
 		5D3892551E98108F00F959E6 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D3892531E98108F00F959E6 /* Model.xcdatamodeld */; };
@@ -546,8 +545,6 @@
 		EBACC8551DF9BB3500D5E048 /* SettingsViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBACC8541DF9BB3500D5E048 /* SettingsViewTest.swift */; };
 		EBD312D01E4967FE0077934D /* SyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD312CF1E4967FE0077934D /* SyncTest.swift */; };
 		EBDB7D471E14231900D744C7 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDB7D461E14231900D744C7 /* Sync.swift */; };
-		EBDB7D501E1432E800D744C7 /* bundle.js in Resources */ = {isa = PBXBuildFile; fileRef = EBDB7D4E1E1432E800D744C7 /* bundle.js */; };
-		EBDB7D551E14331900D744C7 /* fetch.js in Resources */ = {isa = PBXBuildFile; fileRef = EBDB7D531E14331900D744C7 /* fetch.js */; };
 		EBDB7D571E14337800D744C7 /* ios-sync.js in Resources */ = {isa = PBXBuildFile; fileRef = EBDB7D561E14337800D744C7 /* ios-sync.js */; };
 		EBE50B831DAE8D77000BC0A1 /* BookmarksTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE50B7C1DAE8D70000BC0A1 /* BookmarksTest.swift */; };
 		EBE50B871DAEC689000BC0A1 /* Deferred.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBE50B861DAEC689000BC0A1 /* Deferred.framework */; };
@@ -1166,7 +1163,6 @@
 		5D2785991E70D7EF0066EC15 /* JSInjector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSInjector.swift; sourceTree = "<group>"; };
 		5D2AE6F51E83F3EC00BC274C /* SyncBookmark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncBookmark.swift; sourceTree = "<group>"; };
 		5D2AE6F71E83F3EC00BC274C /* SyncSite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncSite.swift; sourceTree = "<group>"; };
-		5D2B07EA1E6733B900244C39 /* niceware.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = niceware.js; path = Carthage/Checkouts/niceware/browser/niceware.js; sourceTree = SOURCE_ROOT; };
 		5D2F10651EC9E8AD00CF0E0D /* Model3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model3.xcdatamodel; sourceTree = "<group>"; };
 		5D2F106D1ECA0E3100CF0E0D /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Device.swift; path = brave/src/data/Device.swift; sourceTree = "<group>"; };
 		5D2F109D1ECA40DC00CF0E0D /* SyncRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncRecord.swift; sourceTree = "<group>"; };
@@ -1535,8 +1531,6 @@
 		EBACC8541DF9BB3500D5E048 /* SettingsViewTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewTest.swift; sourceTree = "<group>"; };
 		EBD312CF1E4967FE0077934D /* SyncTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncTest.swift; sourceTree = "<group>"; };
 		EBDB7D461E14231900D744C7 /* Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
-		EBDB7D4E1E1432E800D744C7 /* bundle.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = bundle.js; sourceTree = "<group>"; };
-		EBDB7D531E14331900D744C7 /* fetch.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = fetch.js; sourceTree = "<group>"; };
 		EBDB7D561E14337800D744C7 /* ios-sync.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "ios-sync.js"; sourceTree = "<group>"; };
 		EBE50B7C1DAE8D70000BC0A1 /* BookmarksTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookmarksTest.swift; sourceTree = "<group>"; };
 		EBE50B861DAEC689000BC0A1 /* Deferred.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Deferred.framework; path = Carthage/Build/iOS/Deferred.framework; sourceTree = "<group>"; };
@@ -3098,9 +3092,6 @@
 			isa = PBXGroup;
 			children = (
 				EBDB7D561E14337800D744C7 /* ios-sync.js */,
-				5D2B07EA1E6733B900244C39 /* niceware.js */,
-				EBDB7D511E14331900D744C7 /* polyfill */,
-				EBDB7D4C1E1432E800D744C7 /* bundles */,
 				5D2785991E70D7EF0066EC15 /* JSInjector.swift */,
 				EBDB7D461E14231900D744C7 /* Sync.swift */,
 				5D71B69A1E6885E00073621F /* Niceware.swift */,
@@ -3109,24 +3100,6 @@
 			name = sync;
 			path = brave/src/sync;
 			sourceTree = "<group>";
-		};
-		EBDB7D4C1E1432E800D744C7 /* bundles */ = {
-			isa = PBXGroup;
-			children = (
-				EBDB7D4E1E1432E800D744C7 /* bundle.js */,
-			);
-			name = bundles;
-			path = Carthage/Checkouts/sync/bundles;
-			sourceTree = SOURCE_ROOT;
-		};
-		EBDB7D511E14331900D744C7 /* polyfill */ = {
-			isa = PBXGroup;
-			children = (
-				EBDB7D531E14331900D744C7 /* fetch.js */,
-			);
-			name = polyfill;
-			path = Carthage/Checkouts/sync/client/polyfill;
-			sourceTree = SOURCE_ROOT;
 		};
 		F1D471871D777C7C007B443D /* OnePassword */ = {
 			isa = PBXGroup;
@@ -3933,7 +3906,6 @@
 				886E3B0001BC705ACFC4AD45 /* adInfo-wrapper.js in Resources */,
 				507ACE2A12D675DAF9C79198 /* adInfo.js in Resources */,
 				EBA11E1A1E2EB84800C964E0 /* adblock-regions.txt in Resources */,
-				EBDB7D501E1432E800D744C7 /* bundle.js in Resources */,
 				E4309BC56F1431FEA791E157 /* BlankTargetDetector.js in Resources */,
 				EB4E15ED1DB7F36600A4C7EA /* Localizable.strings in Resources */,
 				EB8F569F1DD13DF300679A78 /* FiraSans-Light.ttf in Resources */,
@@ -3956,7 +3928,6 @@
 				9EC9707BF7ABD93FBB0FFDB9 /* LoginsHelper.js in Resources */,
 				4D68B2825D2CAD5FB6098D21 /* NetError.css in Resources */,
 				EB8F56991DD13DF300679A78 /* CharisSILI.ttf in Resources */,
-				EBDB7D551E14331900D744C7 /* fetch.js in Resources */,
 				6B06EE00444FA99CCD366C2B /* NetError.html in Resources */,
 				EBDB7D571E14337800D744C7 /* ios-sync.js in Resources */,
 				13657B6789F5024F64E16739 /* PrintHelper.js in Resources */,
@@ -3967,7 +3938,6 @@
 				EB8F56A01DD13DF300679A78 /* FiraSans-Medium.ttf in Resources */,
 				2210C35A6B7EB8745B0E93B9 /* SessionRestore.html in Resources */,
 				EB8F569E1DD13DF300679A78 /* FiraSans-Italic.ttf in Resources */,
-				5D2B07EB1E6733B900244C39 /* niceware.js in Resources */,
 				59F67C0B4DAA5B488E2C83EF /* SpotlightHelper.js in Resources */,
 				EB8F56981DD13DF300679A78 /* CharisSILBI.ttf in Resources */,
 				8F8FEAE7F3F5794866B0163C /* topdomains.txt in Resources */,
