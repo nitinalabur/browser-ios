@@ -19,11 +19,11 @@ class ContainerWebView : WKWebView {
 var globalContainerWebView = ContainerWebView()
 
 protocol WebPageStateDelegate : class {
-    func webView(_ webView: UIWebView, progressChanged: Float)
-    func webView(_ webView: UIWebView, isLoading: Bool)
-    func webView(_ webView: UIWebView, urlChanged: String)
-    func webView(_ webView: UIWebView, canGoBack: Bool)
-    func webView(_ webView: UIWebView, canGoForward: Bool)
+    func webView(_ webView: BraveWebView, progressChanged: Float)
+    func webView(_ webView: BraveWebView, isLoading: Bool)
+    func webView(_ webView: BraveWebView, urlChanged: String)
+    func webView(_ webView: BraveWebView, canGoBack: Bool)
+    func webView(_ webView: BraveWebView, canGoForward: Bool)
 }
 
 
@@ -82,7 +82,34 @@ struct BraveWebViewConstants {
     static let kContextMenuBlockNavigation = 8675309
 }
 
-class BraveWebView: UIWebView {
+// Webview interface
+extension BraveWebView {
+
+    var scrollView: UIScrollView {
+        return webview.scrollView
+    }
+    
+    func stringByEvaluatingJavaScript(from: String) -> String? {
+        return webview.stringByEvaluatingJavaScript(from: from)
+    }
+    
+    var view: UIView {
+        return webview
+    }
+    
+    func removeGestureRecognizer(_ gesture: UIGestureRecognizer) {
+        webview.removeGestureRecognizer(gesture)
+    }
+    
+    func addGestureRecognizer(_ gesture: UIGestureRecognizer) {
+        webview.addGestureRecognizer(gesture)
+    }
+}
+
+class BraveWebView {
+        fileprivate let webview = UIWebView()
+
+    
     class Weak_WebPageStateDelegate {     // We can't use a WeakList here because this is a protocol.
         weak var value : WebPageStateDelegate?
         init (value: WebPageStateDelegate) { self.value = value }
@@ -320,7 +347,7 @@ class BraveWebView: UIWebView {
         }
     }
 
-    override var isLoading: Bool {
+    var isLoading: Bool {
         get {
             return estimatedProgress > 0 && estimatedProgress < 0.99
         }
@@ -364,7 +391,7 @@ class BraveWebView: UIWebView {
 
     let swizzledFirstLayoutNotification = "WebViewFirstLayout" // not broadcast on history push nav
 
-    override func loadRequest(_ request: URLRequest) {
+    func loadRequest(_ request: URLRequest) {
         clearLoadCompletedHtmlProperty()
 
         guard let internalWebView = value(forKeyPath: "documentView.webView") else { return }
@@ -485,7 +512,7 @@ class BraveWebView: UIWebView {
         self.reload()
     }
 
-    override func reload() {
+    func reload() {
         clearLoadCompletedHtmlProperty()
         shieldStatUpdate(.reset)
         progress?.setProgress(0.3)
@@ -502,7 +529,7 @@ class BraveWebView: UIWebView {
         BraveApp.setupCacheDefaults()
     }
 
-    override func stopLoading() {
+    func stopLoading() {
         super.stopLoading()
         self.progress?.reset()
     }
@@ -541,7 +568,7 @@ class BraveWebView: UIWebView {
         }
     }
 
-    override func goBack() {
+    func goBack() {
         clearLoadCompletedHtmlProperty()
 
         // stop scrolling so the web view will respond faster
@@ -550,7 +577,7 @@ class BraveWebView: UIWebView {
         super.goBack()
     }
 
-    override func goForward() {
+    func goForward() {
         clearLoadCompletedHtmlProperty()
 
         scrollView.setContentOffset(scrollView.contentOffset, animated: false)
@@ -564,7 +591,7 @@ class BraveWebView: UIWebView {
     }
 
     // Long press context menu text selection overriding
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+    func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return super.canPerformAction(action, withSender: sender)
     }
 

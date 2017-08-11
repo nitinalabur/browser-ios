@@ -55,6 +55,7 @@ class LegacyUserContentController
             return
         }
 
+
         // use tap detection until this returns false/
         // on page start reset enableBlankTargetTapDetection, then set it off when page loaded
         webView.blankTargetLinkDetectionOn = true
