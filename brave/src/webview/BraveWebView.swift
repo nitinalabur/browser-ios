@@ -520,8 +520,8 @@ class BraveWebView {
         URLCache.shared.diskCapacity = 0
         URLCache.shared.memoryCapacity = 0
 
-        if let url = URL {
-            internalSetBraveShieldStateForDomain(url.normalizedHost!)
+        if let url = URL?.normalizedHost {
+            internalSetBraveShieldStateForDomain(url)
             (getApp().browserViewController as! BraveBrowserViewController).updateBraveShieldButtonState(false)
         }
         super.reload()

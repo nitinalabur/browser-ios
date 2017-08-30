@@ -12,7 +12,7 @@ let kPrefKeyTabsBarShowPolicy = "kPrefKeyTabsBarShowPolicy"
 let kPrefKeyTabsBarOnDefaultValue = UIDevice.current.userInterfaceIdiom == .pad ? TabsBarShowPolicy.always : TabsBarShowPolicy.landscapeOnly
 
 let minTabWidth =  UIDevice.current.userInterfaceIdiom == .pad ? CGFloat(180) : CGFloat(160)
-let tabHeight = TabsBarHeight - 1
+let tabHeight = TabsBarHeight
 
 class TabsBarViewController: UIViewController {
     var scrollView: UIScrollView!
@@ -29,6 +29,7 @@ class TabsBarViewController: UIViewController {
     }
 
     fileprivate var isAddTabAnimationRunning = false
+    fileprivate var insertTabScheduled = false
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -47,27 +48,17 @@ class TabsBarViewController: UIViewController {
 
         if UIDevice.current.userInterfaceIdiom == .pad {
             plusButton.setImage(UIImage(named: "add")!.withRenderingMode(.alwaysTemplate), for: .normal)
-            plusButton.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 10)
+            plusButton.imageEdgeInsets = UIEdgeInsetsMake(6, 10, 6, 10)
             plusButton.tintColor = UIColor.black
             plusButton.contentMode = .scaleAspectFit
             plusButton.addTarget(self, action: #selector(addTabPressed), for: .touchUpInside)
+            plusButton.backgroundColor = UIColor.init(white: 0.0, alpha: 0.1)
             view.addSubview(plusButton)
 
             plusButton.snp.makeConstraints { (make) in
                 make.right.top.bottom.equalTo(view)
                 make.width.equalTo(BraveUX.TabsBarPlusButtonWidth)
             }
-
-            let vertLine = UIView()
-            vertLine.backgroundColor = UIColor.black
-            plusButton.addSubview(vertLine)
-            vertLine.snp.makeConstraints { (make) in
-                make.left.equalTo(plusButton)
-                make.width.equalTo(1)
-                make.height.equalTo(22)
-                make.centerY.equalTo(plusButton.snp.centerY)
-            }
-
         }
 
         getApp().tabManager.addDelegate(self)
@@ -202,11 +193,19 @@ class TabsBarViewController: UIViewController {
         tabs.append(t)
         
         if let index = at, index > -1 && index < tabs.count {
-            isAddTabAnimationRunning = false
-            moveTab(t, index: index)
-            recalculateTabView()
-            updateSeparatorLineBetweenTabs()
-            return t
+            // Ignore all of this on bootup
+            if !getApp().tabManager.isRestoring && !insertTabScheduled {
+                // Trottle layout. Reduce re-layout bottleneck on fast tab creation.
+                insertTabScheduled = true
+                postAsyncToMain(0.2) { [weak self] in
+                    self?.insertTabScheduled = false
+                    self?.isAddTabAnimationRunning = false
+                    self?.moveTab(t, index: index)
+                    self?.recalculateTabView()
+                    self?.updateSeparatorLineBetweenTabs()
+                }
+                return t
+            }
         }
 
         if self.isVisible {
@@ -420,9 +419,13 @@ extension TabsBarViewController {
     func moveTab(_ tab: TabWidget, index: Int) {
         guard let oldIndex = tabs.index(of: tab) else { return }
 
-        tabs.remove(at: oldIndex)
-        tabs.insert(tab, at: index)
+        // Could look at further optimizations (e.g. returning when no change)
 
+        if oldIndex != index {
+            tabs.remove(at: oldIndex)
+            tabs.insert(tab, at: index)
+        }
+        
         let w = calcTabWidth(tabs.count)
 
         var prev = spacerLeftmost

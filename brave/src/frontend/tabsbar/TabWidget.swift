@@ -76,7 +76,9 @@ class TabWidget : UIView {
 
         close.addTarget(self, action: #selector(clicked), for: .touchUpInside)
         title.addTarget(self, action: #selector(selected), for: .touchUpInside)
-        title.setTitle("", for: .normal)
+        
+        let t = TabMO.getByID(browser.tabID ?? "", context: DataController.shared.mainThreadContext)
+        title.setTitle(t?.title, for: .normal)
         [close, title, separatorLine].forEach { addSubview($0) }
 
         close.setImage(UIImage(named: "stop")?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -89,11 +91,11 @@ class TabWidget : UIView {
 
         reinstallConstraints()
 
-        separatorLine.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        separatorLine.backgroundColor = UIColor.black.withAlphaComponent(0.15)
         separatorLine.snp.makeConstraints { (make) in
             make.left.equalTo(self)
             make.width.equalTo(1)
-            make.height.equalTo(22)
+            make.height.equalTo(26)
             make.centerY.equalTo(self.snp.centerY)
         }
 

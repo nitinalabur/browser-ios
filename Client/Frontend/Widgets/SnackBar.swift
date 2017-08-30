@@ -26,7 +26,7 @@ class SnackButton : UIButton {
      */
     lazy var highlightImg: UIImage = {
         let size = CGSize(width: 1, height: 1)
-        return UIImage.createWithColor(size, color: UIConstants.HighlightColor)
+        return UIImage.createWithColor(size, color: BraveUX.DefaultBlue.withAlphaComponent(0.2))
     }()
 
     init(title: String, accessibilityIdentifier: String, callback: @escaping (_ bar: SnackBar) -> Void) {
@@ -35,7 +35,7 @@ class SnackButton : UIButton {
         super.init(frame: CGRect.zero)
 
         setTitle(title, for: .normal)
-        titleLabel?.font = DynamicFontHelper.defaultHelper.DefaultMediumFont
+        titleLabel?.font = DynamicFontHelper.defaultHelper.DefaultStandardFontBold
         setBackgroundImage(highlightImg, for: .highlighted)
         setTitleColor(UIConstants.HighlightText, for: .highlighted)
 
@@ -94,7 +94,8 @@ class SnackBar: UIView {
         textLabel = UILabel()
         contentView = UIView()
         buttonsView = Toolbar()
-        backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.extraLight))
+        backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor(rgb: 0xe8e8e8)
 
         super.init(frame: CGRect.zero)
 
@@ -113,8 +114,9 @@ class SnackBar: UIView {
         textLabel = UILabel()
         contentView = UIView()
         buttonsView = Toolbar()
-        backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.extraLight))
-
+        backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor(rgb: 0xe8e8e8)
+        
         super.init(frame: frame)
     }
 
@@ -130,11 +132,12 @@ class SnackBar: UIView {
         self.backgroundColor = UIColor.clear
         buttonsView.drawTopBorder = true
         buttonsView.drawBottomBorder = false
-        buttonsView.drawSeperators = true
+        buttonsView.drawSeperators = false
 
         imageView.contentMode = UIViewContentMode.left
 
-        textLabel.font = DynamicFontHelper.defaultHelper.DefaultMediumFont
+        textLabel.font = DynamicFontHelper.defaultHelper.DefaultStandardFont
+        textLabel.textAlignment = .center
         textLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
         textLabel.numberOfLines = 0
         textLabel.backgroundColor = UIColor.clear
@@ -154,19 +157,6 @@ class SnackBar: UIView {
         }
         self.textLabel.preferredMaxLayoutWidth = contentView.frame.width - (imageWidth + UIConstants.DefaultPadding)
         super.layoutSubviews()
-    }
-
-    fileprivate func drawLine(_ context: CGContext, start: CGPoint, end: CGPoint) {
-        context.setStrokeColor(UIConstants.BorderColor.cgColor)
-        context.setLineWidth(1)
-        context.move(to: CGPoint(x: start.x, y: start.y))
-        context.addLine(to: CGPoint(x: end.x, y: end.y))
-        context.strokePath()
-    }
-
-    override func draw(_ rect: CGRect) {
-        let context = UIGraphicsGetCurrentContext()
-        drawLine(context!, start: CGPoint(x: 0, y: 1), end: CGPoint(x: frame.size.width, y: 1))
     }
 
     /**

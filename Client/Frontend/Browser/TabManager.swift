@@ -162,6 +162,10 @@ class TabManager : NSObject {
         // Update tab order.
         debugPrint("updated tab index from \(from) to \(to)")
         
+        saveTabOrder()
+    }
+    
+    func saveTabOrder() {
         let context = DataController.shared.mainThreadContext
         for i in 0..<tabs.internalTabList.count {
             let tab = tabs.internalTabList[i]
@@ -245,7 +249,13 @@ class TabManager : NSObject {
     }
 
     @discardableResult func addTabAndSelect(_ request: URLRequest! = nil, configuration: WKWebViewConfiguration! = nil) -> Browser? {
-        guard let tab = addTab(request, configuration: configuration, id: TabMO.freshTab()) else { return nil }
+        guard let tab = addTab(request, configuration: configuration, id: nil) else { return nil }
+        selectTab(tab)
+        return tab
+    }
+    
+    @discardableResult func addAdjacentTabAndSelect(_ request: URLRequest! = nil, configuration: WKWebViewConfiguration! = nil) -> Browser? {
+        guard let tab = addTab(request, configuration: configuration, id: nil, index: getApp().tabManager.currentIndex+1) else { return nil }
         selectTab(tab)
         return tab
     }
@@ -281,6 +291,17 @@ class TabManager : NSObject {
     
     fileprivate func restoreTabsInternal() {
         var tabToSelect: Browser?
+        isRestoring = true
+        
+        // Do not want to load any tabs if PM is enabled
+        assert(!PrivateBrowsing.singleton.isOn, "Tab restoration should never happen in PM")
+        
+        // These tabs MUST be sorted by `order` currently, as they are created in a linear manor 0..<max
+        // Future optimizations to launching can be made by predicting what tabs will most likely be used
+        //  (e.g. the last active tab), and loading those first, and inserting restored tabs in a non-linear
+        //  fashion. This currently has exponential launch delay consequences though. Most of the time impact
+        //  has been related to layout constraints on the tab tray (re-arranging tabs as they are being created)
+        //  Since `move` recalculates each pre-existing tab's position. Hence the forced order here.
         let savedTabs = TabMO.getAll()
         for savedTab in savedTabs {
             if savedTab.url == nil {
@@ -320,8 +341,12 @@ class TabManager : NSObject {
         }
         
         if let tab = tabToSelect {
-            selectTab(tab)
+            postAsyncToMain(0.5) {
+                self.selectTab(tab)
+            }
         }
+        
+        isRestoring = false
     }
 
     fileprivate func limitInMemoryTabs() {
@@ -377,6 +402,7 @@ class TabManager : NSObject {
         else {
             tab.tabID = id
         }
+        
         configureTab(tab, request: request, zombie: zombie, index: index)
         return tab
     }
@@ -412,7 +438,11 @@ class TabManager : NSObject {
         tab.navigationDelegate = navDelegate
         _ = tab.loadRequest(request ?? defaultNewTabRequest)
         
-        TabMO.preserveTab(tab: tab)
+        // Ignore on restore.
+        if !zombie {
+            TabMO.preserveTab(tab: tab)
+            saveTabOrder()
+        }
     }
 
     // This method is duplicated to hide the flushToDisk option from consumers.

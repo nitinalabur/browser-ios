@@ -285,18 +285,20 @@ class BraveURLBarView : URLBarView {
         }
 
         if inSearchMode {
+            pwdMgrButton.isHidden = true
+            
             // In overlay mode, we always show the location view full width
             self.locationContainer.snp.remakeConstraints { make in
                 make.left.equalTo(self.leftSidePanelButton.snp.right)//.offset(URLBarViewUX.LocationLeftPadding)
                 make.right.equalTo(self.cancelButton.snp.left)
                 make.height.equalTo(URLBarViewUX.LocationHeight)
-                make.top.equalTo(self).inset(8)
+                make.top.equalTo(self).inset(URLBarViewUX.LocationInset)
             }
             pinLeftPanelButtonToLeft()
         } else {
             self.locationContainer.snp.remakeConstraints { make in
                 if self.bottomToolbarIsHidden {
-                    // Firefox is not referring to the bottom toolbar, it is asking is this class showing more tool buttons
+                    // Firefox is not referring to the bbackgrottom toolbar, it is asking is this class showing more tool buttons
                     make.leading.equalTo(self.leftSidePanelButton.snp.trailing)
                     make.trailing.equalTo(self).inset(-(UIConstants.ToolbarHeight * (3 + (pwdMgrButton.isHidden == false ? 1 : 0))))
                     
@@ -305,7 +307,7 @@ class BraveURLBarView : URLBarView {
                 }
 
                 make.height.equalTo(URLBarViewUX.LocationHeight)
-                make.top.equalTo(self).inset(8)
+                make.top.equalTo(self).inset(URLBarViewUX.LocationInset)
             }
 
             if self.bottomToolbarIsHidden {
