@@ -5,7 +5,7 @@ private let log = Logger.browserLogger
 
 extension BrowserViewController: WKCompatNavigationDelegate {
 
-    func webViewDidStartProvisionalNavigation(_ webView: UIWebView, url: URL?) {
+    func webViewDidStartProvisionalNavigation(_ webView: BraveWebView, url: URL?) {
         #if !BRAVE
             if tabManager.selectedTab?.webView !== webView {
                 return
@@ -134,7 +134,7 @@ extension BrowserViewController: WKCompatNavigationDelegate {
         shouldLoad = false
     }
 
-    func webViewDidFinishNavigation(_ webView: UIWebView, url: URL?) {
+    func webViewDidFinishNavigation(_ webView: BraveWebView, url: URL?) {
         // BraveWebView handles this
     }
 
@@ -174,7 +174,7 @@ extension BrowserViewController: WKCompatNavigationDelegate {
     }
 
 
-    func webViewDidFailNavigation(_ webView: UIWebView, withError error: NSError) {
+    func webViewDidFailNavigation(_ webView: BraveWebView, withError error: NSError) {
         // Ignore the "Frame load interrupted" error that is triggered when we cancel a request
         // to open an external application and hand it over to UIApplication.openURL(). The result
         // will be that we switch to the external app, for example the app store, while keeping the

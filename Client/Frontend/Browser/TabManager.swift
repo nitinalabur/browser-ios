@@ -177,7 +177,7 @@ class TabManager : NSObject {
         DataController.saveContext(context: context)
     }
 
-    func tabForWebView(_ webView: UIWebView) -> Browser? {
+    func tabForWebView(_ webView: BraveWebView) -> Browser? {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
 
         for tab in tabs.internalTabList {
@@ -574,9 +574,9 @@ extension TabManager {
 
 extension TabManager : WKCompatNavigationDelegate {
 
-    func webViewDecidePolicyForNavigationAction(_ webView: UIWebView, url: URL?, shouldLoad: inout Bool) {}
+    func webViewDecidePolicyForNavigationAction(_ webView: BraveWebView, url: URL?, shouldLoad: inout Bool) {}
 
-    func webViewDidStartProvisionalNavigation(_: UIWebView, url: URL?) {
+    func webViewDidStartProvisionalNavigation(_: BraveWebView, url: URL?) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
 #if BRAVE
@@ -593,7 +593,7 @@ extension TabManager : WKCompatNavigationDelegate {
 #endif
     }
 
-    func webViewDidFinishNavigation(_ webView: UIWebView, url: URL?) {
+    func webViewDidFinishNavigation(_ webView: BraveWebView, url: URL?) {
         hideNetworkActivitySpinner()
 
         // only store changes if this is not an error page
@@ -608,7 +608,7 @@ extension TabManager : WKCompatNavigationDelegate {
         }
     }
 
-    func webViewDidFailNavigation(_: UIWebView, withError _: NSError) {
+    func webViewDidFailNavigation(_: BraveWebView, withError _: NSError) {
         hideNetworkActivitySpinner()
     }
 
@@ -635,10 +635,10 @@ extension TabManager : WKCompatNavigationDelegate {
 }
 
 protocol WKCompatNavigationDelegate : class {
-    func webViewDidFailNavigation(_ webView: UIWebView, withError error: NSError)
-    func webViewDidFinishNavigation(_ webView: UIWebView, url: URL?)
-    func webViewDidStartProvisionalNavigation(_ webView: UIWebView, url: URL?)
-    func webViewDecidePolicyForNavigationAction(_ webView: UIWebView, url: URL?, shouldLoad: inout Bool)
+    func webViewDidFailNavigation(_ webView: BraveWebView, withError error: NSError)
+    func webViewDidFinishNavigation(_ webView: BraveWebView, url: URL?)
+    func webViewDidStartProvisionalNavigation(_ webView: BraveWebView, url: URL?)
+    func webViewDecidePolicyForNavigationAction(_ webView: BraveWebView, url: URL?, shouldLoad: inout Bool)
 }
 
 // WKNavigationDelegates must implement NSObjectProtocol
@@ -659,7 +659,7 @@ class TabManagerNavDelegate : WKCompatNavigationDelegate {
 //        }
 //    }
 
-    func webViewDidFailNavigation(_ webView: UIWebView, withError error: NSError) {
+    func webViewDidFailNavigation(_ webView: BraveWebView, withError error: NSError) {
         for delegate in navDelegates {
             delegate.value?.webViewDidFailNavigation(webView, withError: error)
         }
@@ -672,7 +672,7 @@ class TabManagerNavDelegate : WKCompatNavigationDelegate {
 //            }
 //    }
 
-    func webViewDidFinishNavigation(_ webView: UIWebView, url: URL?) {
+    func webViewDidFinishNavigation(_ webView: BraveWebView, url: URL?) {
         for delegate in navDelegates {
             delegate.value?.webViewDidFinishNavigation(webView, url: url)
         }
@@ -700,13 +700,13 @@ class TabManagerNavDelegate : WKCompatNavigationDelegate {
 //        }
 //    }
 
-    func webViewDidStartProvisionalNavigation(_ webView: UIWebView, url: URL?) {
+    func webViewDidStartProvisionalNavigation(_ webView: BraveWebView, url: URL?) {
         for delegate in navDelegates {
             delegate.value?.webViewDidStartProvisionalNavigation(webView, url: url)
         }
     }
 
-    func webViewDecidePolicyForNavigationAction(_ webView: UIWebView, url: URL?, shouldLoad: inout Bool) {
+    func webViewDecidePolicyForNavigationAction(_ webView: BraveWebView, url: URL?, shouldLoad: inout Bool) {
         for delegate in navDelegates {
             delegate.value?.webViewDecidePolicyForNavigationAction(webView, url: url, shouldLoad: &shouldLoad)
         }

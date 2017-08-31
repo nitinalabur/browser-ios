@@ -1,3 +1,5 @@
 #import <UIKit/UIKit.h>
 
-BOOL webViewIsZoomed(UIWebView *webView);
+@class BraveWebView;
+
+BOOL webViewIsZoomed(BraveWebView *webView);

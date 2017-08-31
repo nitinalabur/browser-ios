@@ -1,6 +1,7 @@
 #import "WebViewDocScale.h"
+#import "BraveWebView.swift"
 
-BOOL webViewIsZoomed(UIWebView *webView) {
+BOOL webViewIsZoomed(BraveWebView *webView) {
     SEL selector = NSSelectorFromString(@"_" "documentScale");
     id obj = webView.scrollView.subviews.firstObject;
     if (!obj || ![obj respondsToSelector:selector]) {

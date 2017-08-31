@@ -78,8 +78,8 @@ class BraveBrowserViewController : BrowserViewController {
         }
 
         if let webView = selected.webView {
-            webViewContainer.insertSubview(webView.view, at: 0)
-            webView.view.snp.makeConstraints { make in
+            webViewContainer.insertSubview(webView, at: 0)
+            webView.snp.makeConstraints { make in
                 make.top.equalTo(webViewContainerToolbar.snp.bottom)
                 make.left.right.bottom.equalTo(self.webViewContainer)
             }

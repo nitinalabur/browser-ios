@@ -47,7 +47,7 @@ class LegacyUserContentController
     }()
 
     func injectIntoMain() {
-        guard let webView = webView else { return }
+        guard let webView = webView?.webview else { return }
 
         let result = webView.stringByEvaluatingJavaScript(from: "window.hasOwnProperty('__firefox__')")
         if result == "true" {
@@ -58,12 +58,12 @@ class LegacyUserContentController
 
         // use tap detection until this returns false/
         // on page start reset enableBlankTargetTapDetection, then set it off when page loaded
-        webView.blankTargetLinkDetectionOn = true
+        self.webView?.blankTargetLinkDetectionOn = true
         if webView.stringByEvaluatingJavaScript(from: LegacyUserContentController.jsPageHasBlankTargets) != "true" {
             // no _blank
-            webView.blankTargetLinkDetectionOn = false
+            self.webView?.blankTargetLinkDetectionOn = false
         }
-        print("has blank targets \(webView.blankTargetLinkDetectionOn)")
+        print("has blank targets \(self.webView?.blankTargetLinkDetectionOn)")
 
         let js = LegacyJSContext()
         js.windowOpenOverride(webView, context:nil)
@@ -78,12 +78,12 @@ class LegacyUserContentController
     }
 
     func injectFingerprintProtection() {
-        guard let webView = webView,
+        guard let webView = webView?.webview,
               let handler = scriptHandlersMainFrame[FingerprintingProtection.scriptMessageHandlerName()!] else { return }
 
         let js = LegacyJSContext()
         js.installHandler(for: webView, handlerName: FingerprintingProtection.scriptMessageHandlerName(), handler:handler)
-        webView.stringByEvaluatingJavaScript(from: FingerprintingProtection.script)
+        self.webView?.stringByEvaluatingJavaScript(from: FingerprintingProtection.script)
 
         let frames = js.findNewFrames(for: webView, withFrameContexts: nil)
         for ctx in frames! {
@@ -94,6 +94,7 @@ class LegacyUserContentController
 
     func injectIntoSubFrame() {
         let js = LegacyJSContext()
+        let webView = self.webView?.webview
         let contexts = js.findNewFrames(for: webView, withFrameContexts: webView?.knownFrameContexts)
 
         for ctx in contexts! {
@@ -115,7 +116,7 @@ class LegacyUserContentController
     static func injectJsIntoAllFrames(_ webView: BraveWebView, script: String) {
         webView.stringByEvaluatingJavaScript(from: script)
         let js = LegacyJSContext()
-        let contexts = js.findNewFrames(for: webView, withFrameContexts: nil)
+        let contexts = js.findNewFrames(for: self.webView?.webview, withFrameContexts: nil)
         for ctx in contexts! {
             js.call(onContext: ctx, script: script)
         }

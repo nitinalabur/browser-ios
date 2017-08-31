@@ -83,6 +83,8 @@ struct BraveWebViewConstants {
 }
 
 // Webview interface
+
+// Should rename this class to something like BraveWebWrapper
 extension BraveWebView {
 
     var scrollView: UIScrollView {
@@ -93,21 +95,112 @@ extension BraveWebView {
         return webview.stringByEvaluatingJavaScript(from: from)
     }
     
-    var view: UIView {
-        return webview
+//    var view: UIView {
+//        return webview
+//    }
+    
+//    var superview: UIView? {
+//        return webview.superview
+//    }
+    
+//    var frame: CGRect {
+//        get { return webview.frame }
+//        set { webview.frame = newValue }
+//    }
+    
+    var request: URLRequest? {
+        return webview.request
     }
     
-    func removeGestureRecognizer(_ gesture: UIGestureRecognizer) {
+    var canGoBack: Bool {
+        return webview.canGoBack
+    }
+    
+    var canGoForward: Bool {
+        return webview.canGoForward
+    }
+    
+//    var backgroundColor: UIColor? {
+//        get { return webview.backgroundColor }
+//        set { webview.backgroundColor = newValue }
+//    }
+//
+//    var isOpaque: Bool {
+//        get { return webview.isOpaque }
+//        set { webview.isOpaque = newValue }
+//    }
+    
+    // These may need to actually be on self!
+    override func removeGestureRecognizer(_ gesture: UIGestureRecognizer) {
         webview.removeGestureRecognizer(gesture)
     }
     
-    func addGestureRecognizer(_ gesture: UIGestureRecognizer) {
+    override func addGestureRecognizer(_ gesture: UIGestureRecognizer) {
         webview.addGestureRecognizer(gesture)
     }
+    
+    override func addObserver(_ observer: NSObject, forKeyPath keyPath: String, options: NSKeyValueObservingOptions = [], context: UnsafeMutableRawPointer?) {
+        webview.addObserver(observer, forKeyPath: keyPath, options: options, context: context)
+    }
+    
+    override func removeObserver(_ observer: NSObject, forKeyPath keyPath: String, context: UnsafeMutableRawPointer?) {
+        webview.removeObserver(observer, forKeyPath: keyPath, context: context)
+    }
+    
+    override func removeObserver(_ observer: NSObject, forKeyPath keyPath: String) {
+        webview.removeObserver(observer, forKeyPath: keyPath)
+    }
+    
+//    var accessibilityLabel: String? {
+//        get { return webview.accessibilityLabel }
+//        set { webview.accessibilityLabel = newValue }
+//    }
+//    
+//    var accessibilityIdentifier: String? {
+//        get { return webview.accessibilityIdentifier }
+//        set { webview.accessibilityIdentifier = newValue }
+//    }
+//    
+//    var accessibilityElementsHidden: Bool {
+//        get { return webview.accessibilityElementsHidden }
+//        set { webview.accessibilityElementsHidden = newValue }
+//    }
+    
+//    var mediaPlaybackRequiresUserAction: Bool {
+//        get { return webview.mediaPlaybackRequiresUserAction }
+//        set { webview.mediaPlaybackRequiresUserAction = newValue }
+//    }
+//    
+//    var allowsInlineMediaPlayback: Bool {
+//        get { return webview.allowsInlineMediaPlayback }
+//        set { webview.allowsInlineMediaPlayback = newValue }
+//    }
+//    
+    var scalesPageToFit: Bool {
+        get { return webview.scalesPageToFit }
+        set { webview.scalesPageToFit = newValue }
+    }
+    
+    
+    
+//    var delegate: UIWebViewDelegate? {
+//        get { return webview.delegate }
+//        set { webview.delegate = newValue }
+//    }
+    
+//    var alpha: CGFloat {
+//        get { return webview.alpha }
+//        set { webview.alpha = newValue }
+//    }
+    
+//    var isUserInteractionEnabled: Bool {
+//        get { return webview.isUserInteractionEnabled }
+//        set { webview.isUserInteractionEnabled = newValue }
+//    }
 }
 
-class BraveWebView {
-        fileprivate let webview = UIWebView()
+class BraveWebView: UIView {
+    let webview = UIWebView()
 
     
     class Weak_WebPageStateDelegate {     // We can't use a WeakList here because this is a protocol.
@@ -135,8 +228,8 @@ class BraveWebView {
 
     var blankTargetLinkDetectionOn = true
     var lastTappedTime: Date?
-    var removeBvcObserversOnDeinit: ((UIWebView) -> Void)?
-    var removeProgressObserversOnDeinit: ((UIWebView) -> Void)?
+    var removeBvcObserversOnDeinit: ((BraveWebView) -> Void)?
+    var removeProgressObserversOnDeinit: ((BraveWebView) -> Void)?
 
     var safeBrowsingBlockTriggered:Bool = false
     
@@ -303,13 +396,18 @@ class BraveWebView {
 
         progress = WebViewProgress(parent: self)
 
-        mediaPlaybackRequiresUserAction = true
-        delegate = self
+        webview.mediaPlaybackRequiresUserAction = true
+        webview.delegate = self
         scalesPageToFit = true
         scrollView.showsHorizontalScrollIndicator = false
-        allowsInlineMediaPlayback = true
+        webview.allowsInlineMediaPlayback = true
         isOpaque = false
         backgroundColor = UIColor.white
+        
+        self.webview.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+        self.webview.backgroundColor = UIColor.clear
 
         let rate = UIScrollViewDecelerationRateFast + (UIScrollViewDecelerationRateNormal - UIScrollViewDecelerationRateFast) * 0.5;
             scrollView.setValue(NSValue(cgSize: CGSize(width: rate, height: rate)), forKey: "_decelerationFactor")
@@ -401,7 +499,7 @@ class BraveWebView {
         if let url = request.url {
             internalSetBraveShieldStateForDomain(url.normalizedHost!)
         }
-        super.loadRequest(request)
+        webview.loadRequest(request)
     }
 
     enum LoadCompleteHtmlPropertyOption {
@@ -524,13 +622,13 @@ class BraveWebView {
             internalSetBraveShieldStateForDomain(url)
             (getApp().browserViewController as! BraveBrowserViewController).updateBraveShieldButtonState(false)
         }
-        super.reload()
+        webview.reload()
         
         BraveApp.setupCacheDefaults()
     }
 
     func stopLoading() {
-        super.stopLoading()
+        webview.stopLoading()
         self.progress?.reset()
     }
 
@@ -574,7 +672,7 @@ class BraveWebView {
         // stop scrolling so the web view will respond faster
         scrollView.setContentOffset(scrollView.contentOffset, animated: false)
         NotificationCenter.default.post(name: Notification.Name(rawValue: kNotificationPageUnload), object: self)
-        super.goBack()
+        webview.goBack()
     }
 
     func goForward() {
@@ -582,7 +680,7 @@ class BraveWebView {
 
         scrollView.setContentOffset(scrollView.contentOffset, animated: false)
         NotificationCenter.default.post(name: Notification.Name(rawValue: kNotificationPageUnload), object: self)
-        super.goForward()
+        webview.goForward()
     }
 
     class func isTopFrameRequest(_ request:URLRequest) -> Bool {
@@ -591,8 +689,8 @@ class BraveWebView {
     }
 
     // Long press context menu text selection overriding
-    func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return super.canPerformAction(action, withSender: sender)
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return webview.canPerformAction(action, withSender: sender)
     }
 
     func injectCSS(_ css: String) {
@@ -874,7 +972,7 @@ extension BraveWebView: UIWebViewDelegate {
             if error.code == -1009 /*kCFURLErrorNotConnectedToInternet*/ {
                 let cache = URLCache.shared.cachedResponse(for: URLRequest(url: errorUrl))
                 if let html = cache?.data.utf8EncodedString, html.characters.count > 100 {
-                    loadHTMLString(html, baseURL: errorUrl)
+                    webview.loadHTMLString(html, baseURL: errorUrl)
                     handled = true
                 }
             }

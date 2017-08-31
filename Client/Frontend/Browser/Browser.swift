@@ -424,6 +424,7 @@ class Browser: NSObject, BrowserWebViewDelegate {
         return nil
     }
 
+    // TODO: Abstract into BraveWebView
     var canGoBack: Bool {
         return webView?.canGoBack ?? false
     }
