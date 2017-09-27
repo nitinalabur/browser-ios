@@ -92,6 +92,7 @@ class BraveURLBarView : URLBarView {
 
         braveButton.addTarget(self, action: #selector(onClickBraveButton) , for: UIControlEvents.touchUpInside)
         braveButton.setImage(UIImage(named: "bravePanelButton"), for: .normal)
+        braveButton.setImage(UIImage(named: "bravePanelButtonOff"), for: .selected)
         braveButton.accessibilityLabel = Strings.Brave_Panel
         braveButton.tintColor = BraveUX.ActionButtonTintColor
 
@@ -453,15 +454,21 @@ class BraveURLBarView : URLBarView {
         leftSidePanelButton.setStarImageBookmarked(isBookmarked)
     }
 
-    func setBraveButtonState(shieldsEnabled: Bool, animated: Bool) {
-        let buttonImageName = shieldsEnabled ? "bravePanelButton" : "bravePanelButtonOff"
-        braveButton.setImage(UIImage(named: buttonImageName), for: .normal)
+    func setBraveButtonState(_ shieldsUp: Bool, animated: Bool) {
+        let selected = !shieldsUp
+        if braveButton.isSelected == selected {
+            return
+        }
         
-        guard animated else { return }
+        braveButton.isSelected = selected
+
+        if !animated {
+            return
+        }
 
         let v = InsetLabel(frame: CGRect(x: 0, y: 0, width: locationContainer.frame.width, height: locationContainer.frame.height))
         v.rightInset = CGFloat(40)
-        v.text = shieldsEnabled ? Strings.Shields_Up : Strings.Shields_Down
+        v.text = braveButton.isSelected ? Strings.Shields_Up : Strings.Shields_Down
         if v.text!.endsWith(" Up") || v.text!.endsWith(" Down") {
             // English translation gets bolded text
             if let range = v.text!.range(of: " ", options:NSString.CompareOptions.backwards) {
@@ -470,7 +477,7 @@ class BraveURLBarView : URLBarView {
             }
         }
 
-        v.backgroundColor = shieldsEnabled ? UIColor(white: 0.6, alpha: 1.0) : BraveUX.BraveButtonMessageInUrlBarColor
+        v.backgroundColor = braveButton.isSelected ? UIColor(white: 0.6, alpha: 1.0) : BraveUX.BraveButtonMessageInUrlBarColor
         v.textAlignment = .right
         locationContainer.addSubview(v)
         v.alpha = 0.0
