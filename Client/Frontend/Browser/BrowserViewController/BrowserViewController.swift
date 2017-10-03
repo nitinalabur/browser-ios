@@ -80,9 +80,6 @@ class BrowserViewController: UIViewController {
     var footerBackground: UIView?
     var topTouchArea: UIButton!
 
-    // Backdrop used for displaying greyed background for private tabs
-    var webViewContainerBackdrop: UIView!
-
     var scrollController = BraveScrollController()
 
     fileprivate var keyboardState: KeyboardState?
@@ -284,7 +281,6 @@ class BrowserViewController: UIViewController {
             return
         }
 
-        webViewContainerBackdrop.alpha = 1
         webViewContainer.alpha = 0
         urlBar.locationView.alpha = 0
     }
@@ -296,9 +292,7 @@ class BrowserViewController: UIViewController {
             self.webViewContainer.alpha = 1
             self.urlBar.locationView.alpha = 1
             self.view.backgroundColor = UIColor.clear
-        }, completion: { _ in
-            self.webViewContainerBackdrop.alpha = 0
-        })
+        }, completion: nil)
     }
 
     deinit {
@@ -326,12 +320,6 @@ class BrowserViewController: UIViewController {
         footerBackdrop = UIView()
         footerBackdrop.backgroundColor = BrowserViewControllerUX.BackgroundColor
         view.addSubview(footerBackdrop)
-
-        log.debug("BVC setting up webViewContainer…")
-        webViewContainerBackdrop = UIView()
-        webViewContainerBackdrop.backgroundColor = BrowserViewControllerUX.BackgroundColor
-        webViewContainerBackdrop.alpha = 0
-        view.addSubview(webViewContainerBackdrop)
 
         webViewContainer = UIView()
         webViewContainer.addSubview(webViewContainerToolbar)
@@ -433,13 +421,6 @@ class BrowserViewController: UIViewController {
                 // iPad layout is customized in BraveTopViewController for showing panels
                 make.left.right.equalTo(header.superview!)
             }
-        }
-        
-        // webViewContainer constraints set in Brave subclass.
-        // TODO: This should be centralized
-
-        webViewContainerBackdrop.snp.makeConstraints { make in
-            make.edges.equalTo(webViewContainer)
         }
 
         webViewContainerToolbar.snp.makeConstraints { make in

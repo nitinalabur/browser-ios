@@ -20,7 +20,6 @@ class BraveBrowserViewController : BrowserViewController {
         super.applyTheme(themeName)
         
         toolbar?.accessibilityLabel = "bottomToolbar"
-        webViewContainerBackdrop.accessibilityLabel = "webViewContainerBackdrop"
         webViewContainer.accessibilityLabel = "webViewContainer"
         statusBarOverlay.accessibilityLabel = "statusBarOverlay"
         urlBar.accessibilityLabel = "BraveUrlBar"
@@ -86,7 +85,6 @@ class BraveBrowserViewController : BrowserViewController {
         historySwiper.setup(self.view, webViewContainer: self.webViewContainer)
         for swipe in [historySwiper.goBackSwipe, historySwiper.goForwardSwipe] {
             selected.webView?.scrollView.panGestureRecognizer.require(toFail: swipe)
-            scrollController.panGesture.require(toFail: swipe)
         }
 
         if let webView = selected.webView {
@@ -110,18 +108,15 @@ class BraveBrowserViewController : BrowserViewController {
     }
 
     override func SELtappedTopArea() {
-     //   scrollController.showToolbars(animated: true)
+        scrollController.showToolbars(animated: true)
     }
 
-    var heightConstraint: Constraint?
     override func setupConstraints() {
         super.setupConstraints()
 
         // TODO: Should be moved to parent class, but requires property moving too
         webViewContainer.snp.remakeConstraints { make in
-            make.left.right.equalTo(self.view)
-            heightConstraint = make.height.equalTo(self.view.snp.height).constraint
-            webViewContainerTopOffset = make.top.equalTo(self.statusBarOverlay.snp.bottom).offset(BraveURLBarView.CurrentHeight).constraint
+            make.edges.equalTo(self.view)
         }
     }
 
@@ -138,15 +133,12 @@ class BraveBrowserViewController : BrowserViewController {
         super.viewDidLayoutSubviews()
 
         webViewContainerTopOffset?.update(offset: BraveURLBarView.CurrentHeight)
-        heightConstraint?.update(offset: -BraveApp.statusBarHeight())
     }
     
     override func updateToolbarStateForTraitCollection(_ newCollection: UITraitCollection) {
         super.updateToolbarStateForTraitCollection(newCollection)
 
-        heightConstraint?.update(offset: -BraveApp.statusBarHeight())
-
-        postAsyncToMain(0) {
+        postAsyncToMain {
             self.urlBar.updateTabsBarShowing()
         }
     }
